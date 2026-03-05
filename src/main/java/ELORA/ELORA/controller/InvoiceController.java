@@ -31,7 +31,7 @@ public class InvoiceController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
 
-            // Đặt tên file động theo mã đơn hàng (Ví dụ: HoaDon_ELORA16789.pdf)
+            // Đặt tên file động theo mã đơn hàng
             String filename = "HoaDon_" + order.getOrderNumber() + ".pdf";
             headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
 
