@@ -2,12 +2,14 @@ server:
   port: 8081
 
 spring:
+  # 1. Cấu hình Database MySQL
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/CosmeticEcommerce?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: "123456"
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # 2. Cấu hình JPA / Hibernate
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,8 +17,32 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
         connection:
           characterEncoding: utf8mb4
           CharSet: utf8mb4
           useUnicode: true
+
+  # 3. Cấu hình Gửi Email (Gmail)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: quynhdiempham3010@gmail.com
+    password: "ivin ytqu gldk jlth"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+# 4. Cấu hình Cổng thanh toán MoMo (Thêm mới đoạn này)
+momo:
+  partner-code: "MOMO"
+  access-key: "F8BBA842ECF85"
+  secret-key: "K951B6PE1waDMi640xX08PD3vg6EkVlz"
+  api-endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"
+  # URL quay về trang web của bạn sau khi thanh toán xong
+  redirect-url: "http://127.0.0.1:5501/FE_EloraBeauty-main/thanh-toan/thanh-toan.html"
+  # URL Backend nhận kết quả thanh toán từ MoMo (IPN)
+  ipn-url: "http://localhost:8081/api/payment/momo-callback"

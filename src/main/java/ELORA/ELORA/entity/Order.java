@@ -1,9 +1,11 @@
 package ELORA.ELORA.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -29,7 +31,7 @@ public class Order {
     private OrderStatus status;
 
     @Column(name = "payment_method")
-    private String paymentMethod; // COD, VNPAY
+    private String paymentMethod;
 
     @ManyToOne
     @JoinColumn(name = "coupon_id")
@@ -57,4 +59,9 @@ public class Order {
 
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
+
+    // --- QUAN TRỌNG: THÊM DÒNG NÀY ĐỂ LẤY DANH SÁCH SẢN PHẨM ---
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<OrderDetail> orderDetails;
 }
