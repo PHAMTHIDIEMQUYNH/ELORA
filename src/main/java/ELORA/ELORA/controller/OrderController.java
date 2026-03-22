@@ -67,33 +67,33 @@ public class OrderController {
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-            System.out.println("📦 Đơn hàng: " + order.getOrderNumber());
-            System.out.println("📌 Trạng thái hiện tại: " + order.getStatus().getName());
-            System.out.println("💳 Phương thức thanh toán: " + order.getPaymentMethod());
-            System.out.println("✅ Trạng thái thanh toán: " + order.getPaymentStatus());
+            System.out.println(" Đơn hàng: " + order.getOrderNumber());
+            System.out.println(" Trạng thái hiện tại: " + order.getStatus().getName());
+            System.out.println(" Phương thức thanh toán: " + order.getPaymentMethod());
+            System.out.println(" Trạng thái thanh toán: " + order.getPaymentStatus());
 
             if (!"Chờ xác nhận".equals(order.getStatus().getName())) {
-                System.out.println("❌ Không thể hủy: Đơn hàng không ở trạng thái chờ xác nhận");
+                System.out.println(" Không thể hủy: Đơn hàng không ở trạng thái chờ xác nhận");
                 return ApiResponse.error(400, "Chỉ có thể hủy đơn ở trạng thái chờ xác nhận");
             }
 
             if (("VNPAY".equals(order.getPaymentMethod()) || "MOMO".equals(order.getPaymentMethod()))
                     && "success".equals(order.getPaymentStatus())) {
-                System.out.println("❌ Không thể hủy: Đơn hàng đã thanh toán thành công");
+                System.out.println(" Không thể hủy: Đơn hàng đã thanh toán thành công");
                 return ApiResponse.error(400, "Đơn hàng đã thanh toán không thể hủy");
             }
 
-            System.out.println("🔍 Đang tìm chi tiết đơn hàng...");
+            System.out.println(" Đang tìm chi tiết đơn hàng...");
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
 
             System.out.println("========================================");
-            System.out.println("📊 KẾT QUẢ TRUY VẤN ORDER_DETAILS");
+            System.out.println(" KẾT QUẢ TRUY VẤN ORDER_DETAILS");
             System.out.println("Order ID: " + orderId);
             System.out.println("Số lượng orderDetails tìm thấy: " + orderDetails.size());
             System.out.println("========================================");
 
             if (orderDetails.isEmpty()) {
-                System.out.println("⚠️ KHÔNG TÌM THẤY CHI TIẾT ĐƠN HÀNG NÀO!");
+                System.out.println(" KHÔNG TÌM THẤY CHI TIẾT ĐƠN HÀNG NÀO!");
             }
 
             for (int i = 0; i < orderDetails.size(); i++) {
@@ -116,7 +116,7 @@ public class OrderController {
                     int oldStock = variant.getStock();
                     int restoreQty = detail.getQuantity();
 
-                    System.out.println("🔄 Đang hoàn kho cho variant ID: " + variant.getId());
+                    System.out.println(" Đang hoàn kho cho variant ID: " + variant.getId());
                     System.out.println("   - Tên biến thể: " + variant.getVariantName() + ": " + variant.getVariantValue());
                     System.out.println("   - Số lượng cần hoàn: " + restoreQty);
                     System.out.println("   - Stock hiện tại: " + oldStock);
@@ -124,15 +124,15 @@ public class OrderController {
                     variant.setStock(oldStock + restoreQty);
                     variantRepository.save(variant);
 
-                    System.out.println("   ✅ Stock mới: " + variant.getStock());
-                    System.out.println("   ✅ Đã hoàn kho +" + restoreQty + " sản phẩm cho variant ID: " + variant.getId());
+                    System.out.println("    Stock mới: " + variant.getStock());
+                    System.out.println("    Đã hoàn kho +" + restoreQty + " sản phẩm cho variant ID: " + variant.getId());
 
                     Product product = variant.getProduct();
                     if (product != null) {
                         int oldSold = product.getSoldCount();
                         product.setSoldCount(oldSold - restoreQty);
                         productRepository.save(product);
-                        System.out.println("   📊 Đã giảm sold_count: " + oldSold + " → " + product.getSoldCount());
+                        System.out.println("    Đã giảm sold_count: " + oldSold + " → " + product.getSoldCount());
                     }
                     totalRestored += restoreQty;
 
@@ -141,7 +141,7 @@ public class OrderController {
                     int oldStock = product.getStock();
                     int restoreQty = detail.getQuantity();
 
-                    System.out.println("🔄 Đang hoàn kho cho product ID: " + product.getId());
+                    System.out.println(" Đang hoàn kho cho product ID: " + product.getId());
                     System.out.println("   - Tên sản phẩm: " + product.getName());
                     System.out.println("   - Số lượng cần hoàn: " + restoreQty);
                     System.out.println("   - Stock hiện tại: " + oldStock);
@@ -150,17 +150,17 @@ public class OrderController {
                     product.setSoldCount(product.getSoldCount() - restoreQty);
                     productRepository.save(product);
 
-                    System.out.println("   ✅ Stock mới: " + product.getStock());
-                    System.out.println("   ✅ Đã hoàn kho +" + restoreQty + " sản phẩm cho product ID: " + product.getId());
+                    System.out.println("    Stock mới: " + product.getStock());
+                    System.out.println("    Đã hoàn kho +" + restoreQty + " sản phẩm cho product ID: " + product.getId());
                     totalRestored += restoreQty;
 
                 } else {
-                    System.out.println("❌ LỖI: Detail ID " + detail.getId() + " không có variant và không có product!");
+                    System.out.println(" LỖI: Detail ID " + detail.getId() + " không có variant và không có product!");
                 }
             }
 
             System.out.println("========================================");
-            System.out.println("📦 Tổng số sản phẩm đã hoàn kho: " + totalRestored);
+            System.out.println(" Tổng số sản phẩm đã hoàn kho: " + totalRestored);
             System.out.println("========================================");
 
             OrderStatus cancelledStatus = orderStatusRepository.findByName("Đã hủy")
@@ -170,15 +170,15 @@ public class OrderController {
             order.setStatus(cancelledStatus);
             orderRepository.save(order);
 
-            System.out.println("🔄 Cập nhật trạng thái đơn hàng: " + oldStatus + " → Đã hủy");
-            System.out.println("🎉 Đã hủy đơn hàng #" + orderId + " và hoàn kho " + totalRestored + " sản phẩm thành công!");
+            System.out.println(" Cập nhật trạng thái đơn hàng: " + oldStatus + " → Đã hủy");
+            System.out.println(" Đã hủy đơn hàng #" + orderId + " và hoàn kho " + totalRestored + " sản phẩm thành công!");
             System.out.println("========================================");
 
             return ApiResponse.success("Hủy đơn hàng thành công! Đã hoàn lại " + totalRestored + " sản phẩm vào kho.");
 
         } catch (Exception e) {
             System.err.println("========================================");
-            System.err.println("❌ LỖI KHI HỦY ĐƠN HÀNG #" + orderId);
+            System.err.println(" LỖI KHI HỦY ĐƠN HÀNG #" + orderId);
             System.err.println("Lỗi: " + e.getMessage());
             e.printStackTrace();
             System.err.println("========================================");
